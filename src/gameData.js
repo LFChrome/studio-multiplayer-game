@@ -8,6 +8,7 @@ import Spark from './games/spark/Spark.js';
 import uno from './games/uno/uno.js';
 import Mafia from './games/mafia/Mafia.js';
 import Pokemon from './games/pokemon/Pokemon.js'
+import DeckOut from './games/deckout/Deckout.js'
 
 const gameData = {
 
@@ -18,6 +19,15 @@ const gameData = {
     minUsers: 1,
     maxUsers: 10,
     component: ChatRoom,
+  },
+
+  deckOut: {
+    title: "Deck Out!",
+    authors: "Jason G. and Wei W.",
+    description: "Burn the deck!",
+    minUsers: 2,
+    maxUsers: 2,
+    component: DeckOut,
   },
 
   tictactoe: {
