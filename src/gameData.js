@@ -26,7 +26,7 @@ const gameData = {
     authors: "Jason G. and Wei W.",
     description: "Burn the deck!",
     minUsers: 2,
-    maxUsers: 2,
+    maxUsers: 4,
     component: DeckOut,
   },
 
