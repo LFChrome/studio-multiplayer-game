@@ -8,11 +8,12 @@ export default class DeckOut extends GameComponent {
     super(props);
     if (this.getMyUserId() === this.getSessionCreatorUserId()) {
       let deck = [];
-      for(var i=0; i<=30; i++) {
+      for(var i=0; i<30; i++) {
         deck.push("blank")
       }
+      console.log(deck);
       this.getSessionDatabaseRef().set({
-        deck: this.deck,
+        newDeck: deck,
       });
     }
   }
