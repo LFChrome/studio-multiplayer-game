@@ -27,12 +27,10 @@ export default class DeckOut extends GameComponent {
       <div className="container">
        {this.renderSessionInfo()}
       </div>
-
     )
   }
 
    renderSessionInfo() {
-      console.log(this.getSessionDatabaseRef());
       var id = this.getSessionId();
       var users = this.getSessionUserIds().map((user_id) => (
         <li key={user_id}>{UserApi.getName(user_id)}</li>
