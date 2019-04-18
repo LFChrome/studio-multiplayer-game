@@ -4,11 +4,21 @@ import UserApi from '../../UserApi.js';
 import '../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 export default class DeckOut extends GameComponent {
+  constructor(props) {
+    super(props);
+    if (this.getMyUserId() === this.getSessionCreatorUserId()) {
+      let deck = [];
+      for(var i=0; i<=30; i++) {
+        deck.push("blank")
+      }
+      this.getSessionDatabaseRef().set({
+        deck: this.deck,
+      });
+    }
+  }
+
 
   render() {
-    if (this.getMyUserId() === this.getSessionCreatorUserId()) {
-      return "I am the host"
-    }
     return (
       <div className="container">
        {this.renderSessionInfo()}
