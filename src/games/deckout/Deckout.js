@@ -17,6 +17,9 @@ export default class DeckOut extends GameComponent {
     }
   }
 
+  onSessionDataChanged(data) {
+    console.log("Data changed!", data);
+  }
 
   render() {
     return (
