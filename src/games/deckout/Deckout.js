@@ -8,18 +8,35 @@ export default class DeckOut extends GameComponent {
     super(props);
     if (this.getMyUserId() === this.getSessionCreatorUserId()) {
       let deck = [];
-      for(var i=0; i<30; i++) {
+      for(var i = 0; i < 30; i++) {
         deck.push("blank")
       }
-      console.log(deck);
+      let users = this.getSessionUserIds();
+      let playerHands = [];
+      for(var j = 0; j < users.length; j++) {
+        let userHand = {
+          user: users[j],
+          cards: [],
+        };
+        for(var k = 1; k <= 5; k++) {
+          let randomNumber = Math.floor(Math.random() * 30)
+          userHand.cards.push(deck[randomNumber]);
+          deck.splice(randomNumber, 1);
+        }
+        playerHands.push(userHand);
+      }
+      /*
       this.getSessionDatabaseRef().set({
-        newDeck: deck,
+        currentTurn: UserApi.getName(this.getSessionCreatorUserId()),
+        deck: deck,
+        hands: playerHands,
       });
+      */
     }
   }
 
   onSessionDataChanged(data) {
-    console.log("Data changed!", data);
+    this.setState(data);
   }
 
   render() {
