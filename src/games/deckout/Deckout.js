@@ -7,23 +7,20 @@ export default class DeckOut extends GameComponent {
   constructor(props) {
     super(props);
     if (this.getMyUserId() === this.getSessionCreatorUserId()) {
+      // Creates deck and hands for all users
       let deck = [];
       for(var i = 0; i < 30; i++) {
-        deck.push("blank")
+        deck.push("Blank");
       }
       let users = this.getSessionUserIds();
-      let playerHands = [];
+      let playerHands = {};
       for(var j = 0; j < users.length; j++) {
-        let userHand = {
-          user: users[j],
-          cards: [],
-        };
+        playerHands[users[j]] = [];
         for(var k = 1; k <= 5; k++) {
           let randomNumber = Math.floor(Math.random() * deck.length)
-          userHand.cards.push(deck[randomNumber]);
+          playerHands[users[j]].push(deck[randomNumber]);
           deck.splice(randomNumber, 1);
         }
-        playerHands.push(userHand);
       }
       this.getSessionDatabaseRef().set({
         currentTurn: UserApi.getName(this.getSessionCreatorUserId()),
@@ -36,19 +33,28 @@ export default class DeckOut extends GameComponent {
 
   onSessionDataChanged(data) {
     this.setState(data);
+    console.log(this.state);
   }
 
   render() {
-    return (
-      <div className="container">
-      <hr/>
-        {this.renderSessionInfo()}
+    if (this.state.hands) {
+      return (
+        <div className="container">
         <hr/>
-      </div>
-    )
+          {this.renderSessionInfo()}
+          <hr/>
+          Cards remaining: {this.state.deck.length}
+          <div className="col-4">{this.renderPlayerHand()}</div>
+          
+        </div>
+      )
+    } else {
+      console.log("loading");
+      return <p>Loading</p>
+    }    
   }
 
-   renderSessionInfo() {
+    renderSessionInfo() {
       var id = this.getSessionId();
       var users = this.getSessionUserIds().map((user_id) => {
         if (this.getSessionCreatorUserId() !== user_id) {
@@ -78,4 +84,26 @@ export default class DeckOut extends GameComponent {
         </div>
       );
     }
+    
+    renderPlayerHand() {
+      let hand = [];
+      for(var i = 0; i < this.state.hands.length; i++) {
+        if (this.state.hands[i].user === this.getMyUserId()) {
+          hand = this.state.hands[i].cards;
+          break;
+        }
+      }
+      var hand_list = hand.map((card) => {
+        return <li key={Math.random()}  className="list-group-item">
+          <button className={card}>{card}</button>
+        </li>
+      });
+      return (
+        <ul className="list-group">
+          {hand_list}
+        </ul>
+      )
+    }
+    
+
   }
