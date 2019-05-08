@@ -23,7 +23,7 @@ export default class DeckOut extends GameComponent {
         }
       }
       this.getSessionDatabaseRef().set({
-        currentTurn: UserApi.getName(this.getSessionCreatorUserId()),
+        currentTurn: 0,
         deck: deck,
         hands: playerHands,
       });
@@ -33,7 +33,6 @@ export default class DeckOut extends GameComponent {
 
   onSessionDataChanged(data) {
     this.setState(data);
-    console.log(this.state);
   }
 
   render() {
@@ -46,6 +45,9 @@ export default class DeckOut extends GameComponent {
           Cards remaining: {this.state.deck.length}
           <div className="row">
             <div className="col-4">{this.renderPlayerHand()}</div>
+            <div className="col-8">
+
+            </div>
           </div>
         </div>
       )
@@ -115,5 +117,20 @@ export default class DeckOut extends GameComponent {
       )
     }
     
+    handleCardPlayed(card) {
+      //doCardEffect(card)
+      let currentUserHand = this.state.hands[this.getMyUserId()];
+      let indexOfCardPlayed = currentUserHand.indexOf(card);
+      if (indexOfCardPlayed > -1) {
+        currentUserHand.splice(indexOfCardPlayed, 1);
+      }
+      let newTurn = this.state.currentTurn + 1;
+      this.getSessionDatabaseRef().update({
+        currentTurn: newTurn,
+        hands: {
+          [this.getMyUserId()]: currentUserHand
+        }
+      });
+    }
 
   }
