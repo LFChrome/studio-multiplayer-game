@@ -90,19 +90,23 @@ export default class DeckOut extends GameComponent {
       let user = this.getMyUserId();
       let hand = this.state.hands[user];
       /*
-      for(var i = 0; i < this.state.hands.length; i++) {
-        if (this.state.hands[i].user === this.getMyUserId()) {
-          hand = this.state.hands[i].cards;
-          console.log(hand);
-          break;
-        }
-      }
+      <div class="card">
+  <div class="card-body">
+    <h5 class="card-title">Blank</h5>
+    <p class="card-text">Does Nothing.</p>
+    <button class="btn btn-primary">Play Card</button>
+  </div>
+</div>
       */
       console.log(hand);
       var hand_list = hand.map((card) => {
-        return ( <li key={Math.random()} className="list-group-item">
-          <button className={card}>{card}</button>
-        </li>
+        return (
+          <div class="card">
+              <li key={Math.random()} className="list-group-item">
+                <h5 class="card-title">{card}</h5>
+               <button className={card} class="btn btn-success">Play Card</button>
+              </li>
+          </div>
       )});
       return (
         <ul className="list-group">
