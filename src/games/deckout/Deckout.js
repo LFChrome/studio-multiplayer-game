@@ -44,8 +44,9 @@ export default class DeckOut extends GameComponent {
           {this.renderSessionInfo()}
           <hr/>
           Cards remaining: {this.state.deck.length}
-          <div className="col-4">{this.renderPlayerHand()}</div>
-          
+          <div className="row">
+            <div className="col-4">{this.renderPlayerHand()}</div>
+          </div>
         </div>
       )
     } else {
@@ -86,18 +87,23 @@ export default class DeckOut extends GameComponent {
     }
     
     renderPlayerHand() {
-      let hand = [];
+      let user = this.getMyUserId();
+      let hand = this.state.hands[user];
+      /*
       for(var i = 0; i < this.state.hands.length; i++) {
         if (this.state.hands[i].user === this.getMyUserId()) {
           hand = this.state.hands[i].cards;
+          console.log(hand);
           break;
         }
       }
+      */
+      console.log(hand);
       var hand_list = hand.map((card) => {
-        return <li key={Math.random()}  className="list-group-item">
+        return ( <li key={Math.random()} className="list-group-item">
           <button className={card}>{card}</button>
         </li>
-      });
+      )});
       return (
         <ul className="list-group">
           {hand_list}
