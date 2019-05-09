@@ -93,8 +93,8 @@ export default class DeckOut extends GameComponent {
         return (
           <div class="card" key={Math.random()}>
               <li className="list-group-item">
-                <h5 className="card-title">{card}</h5>
-               <button className={card} className="btn btn-success">Play Card</button>
+                <h5 class="card-title">{card}</h5>
+               <button className={card} className="btn btn-success" onClick={() => {this.handleCardPlayed("blank")}}>Play Card</button>
               </li>
           </div>
       )});
@@ -107,11 +107,10 @@ export default class DeckOut extends GameComponent {
     
     handleCardPlayed(card) {
       //doCardEffect(card)
+      console.log(this.state)
       let currentUserHand = this.state.hands[this.getMyUserId()];
       let indexOfCardPlayed = currentUserHand.indexOf(card);
-      if (indexOfCardPlayed > -1) {
-        currentUserHand.splice(indexOfCardPlayed, 1);
-      }
+      currentUserHand.splice(indexOfCardPlayed, 1);
       let newTurn = this.state.currentTurn + 1;
       this.getSessionDatabaseRef().update({
         currentTurn: newTurn,
