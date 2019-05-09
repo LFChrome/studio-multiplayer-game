@@ -36,7 +36,8 @@ export default class DeckOut extends GameComponent {
   }
 
   render() {
-    if (this.state.hands) {
+    if (this.state) {
+      console.log(this.state);
       return (
         <div className="container">
         <hr/>
@@ -91,13 +92,14 @@ export default class DeckOut extends GameComponent {
       console.log(hand);
       var hand_list = hand.map((card) => {
         return (
-          <div class="card" key={Math.random()}>
+          <div className="card" key={Math.random()}>
               <li className="list-group-item">
-                <h5 class="card-title">{card}</h5>
+                <h5 className="card-title">{card}</h5>
                <button className={card} className="btn btn-success" onClick={() => {this.handleCardPlayed("blank")}}>Play Card</button>
               </li>
           </div>
-      )});
+        )
+      });
       return (
         <ul className="list-group">
           {hand_list}
@@ -107,7 +109,6 @@ export default class DeckOut extends GameComponent {
     
     handleCardPlayed(card) {
       //doCardEffect(card)
-      console.log(this.state)
       let currentUserHand = this.state.hands[this.getMyUserId()];
       let indexOfCardPlayed = currentUserHand.indexOf(card);
       currentUserHand.splice(indexOfCardPlayed, 1);
