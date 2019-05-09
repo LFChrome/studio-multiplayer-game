@@ -69,9 +69,9 @@ export default class DeckOut extends GameComponent {
       return (
         <div className="row">
           <div className="col-4">
-            <h1>
+            <h3>
               Deck-Out!
-            </h1>
+            </h3>
           </div>
           <div className="col-4">          
             <p>Session ID:
@@ -79,10 +79,7 @@ export default class DeckOut extends GameComponent {
             </p>
           </div>
           <div className="col-4">
-            <p>Session users:</p>
-            <ul className="list-inline">
-              {users}
-            </ul>
+            <p>Players: {users}</p>  
           </div>
         </div>
       );
@@ -105,8 +102,8 @@ export default class DeckOut extends GameComponent {
         return (
           <div class="card">
               <li key={Math.random()} className="list-group-item">
-                <h5 class="card-title">{card}</h5>
-               <button className={card} class="btn btn-success">Play Card</button>
+                <h5 className="card-title">{card}</h5>
+               <button className={card} className="btn btn-success">Play Card</button>
               </li>
           </div>
       )});
