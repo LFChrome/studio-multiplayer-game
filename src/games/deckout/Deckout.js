@@ -2,6 +2,7 @@ import GameComponent from '../../GameComponent.js';
 import React from 'react';
 import UserApi from '../../UserApi.js';
 import '../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
+import './deckOut.css';
 
 export default class DeckOut extends GameComponent {
   constructor(props) {
@@ -23,9 +24,11 @@ export default class DeckOut extends GameComponent {
         }
       }
       this.getSessionDatabaseRef().set({
-        currentTurn: 0,
+        currentTurn: 1,
         deck: deck,
         hands: playerHands,
+        currentPlayer: UserApi.getName(users[0]),
+
       });
 
     }
@@ -47,7 +50,7 @@ export default class DeckOut extends GameComponent {
           <div className="row">
             <div className="col-4">{this.renderPlayerHand()}</div>
             <div className="col-8">
-
+              <textarea className="log" rows="10" readonly></textarea>
             </div>
           </div>
         </div>
@@ -78,6 +81,12 @@ export default class DeckOut extends GameComponent {
             <p>Session ID:
               <b>{id}</b>
             </p>
+            <p>
+              Round: {this.state.currentTurn}
+            </p>
+            <p>
+              Player Turn: {this.state.currentPlayer}
+            </p>
           </div>
           <div className="col-4">
             <p>Players: {users}</p>  
@@ -95,7 +104,7 @@ export default class DeckOut extends GameComponent {
           <div className="card" key={Math.random()}>
               <li className="list-group-item">
                 <h5 className="card-title">{card}</h5>
-               <button className={card} className="btn btn-success" onClick={() => {this.handleCardPlayed("blank")}}>Play Card</button>
+                <button className={card} className="btn btn-success" onClick={() => {this.handleCardPlayed("blank")}}>Play Card</button>
               </li>
           </div>
         )
@@ -107,17 +116,34 @@ export default class DeckOut extends GameComponent {
       )
     }
     
+    playerTurn(){
+      if(this.state.currentTurn%2 === 0){
+        return UserApi.getName(this.getSessionCreatorUserId())
+      }else{  
+       return UserApi.getName(this.getMyUserId()) 
+      }
+    }
+
+    //Shold disable the cards on other player turn
+    oneCard(){
+      if(this.state.currentPlayer === this.getMyUserId){
+  
+      }
+    }
+
     handleCardPlayed(card) {
       //doCardEffect(card)
       let currentUserHand = this.state.hands[this.getMyUserId()];
       let indexOfCardPlayed = currentUserHand.indexOf(card);
       currentUserHand.splice(indexOfCardPlayed, 1);
       let newTurn = this.state.currentTurn + 1;
+      let drawDeck = this.state.deck -1;
       this.getSessionDatabaseRef().update({
         currentTurn: newTurn,
         hands: {
           [this.getMyUserId()]: currentUserHand
-        }
+        },
+        currentPlayer: this.playerTurn(),
       });
     }
 
