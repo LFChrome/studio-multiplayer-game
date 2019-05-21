@@ -23,6 +23,7 @@ export default class DeckOut extends GameComponent {
           deck.splice(randomNumber, 1);
         }
       }
+      //*******************************************************************
       this.getSessionDatabaseRef().set({
         currentTurn: 1,
         deck: deck,
@@ -118,14 +119,18 @@ export default class DeckOut extends GameComponent {
   }
   handleCardPlayed(card) {
     //doCardEffect(card)
+    //*******************************************************************
     // Update the hand of the user who just played
     let currentUserHand = this.state.hands[this.getMyUserId()];
     let indexOfCardPlayed = currentUserHand.indexOf(card);
     currentUserHand.splice(indexOfCardPlayed, 1);
+    //*******************************************************************
     // Advance one round
     let newTurn = this.state.currentTurn + 1;
+    //*******************************************************************
     // Change the current user playing
     let newPlayer = this.state.users[this.state.currentTurn%this.state.users.length];
+    //*******************************************************************
     // Give a card to the new player
     if (this.state.deck.length !== 0) {
       let cardDrawn = this.state.deck[0];
@@ -134,6 +139,8 @@ export default class DeckOut extends GameComponent {
     } 
     let newDeck = this.state.deck;
     let newPlayerHand = this.state.hands[newPlayer];
+    //*******************************************************************
+    // Update everything in the database
     this.getSessionDatabaseRef().update({
       currentTurn: newTurn,
       currentPlayer: newPlayer,
@@ -143,6 +150,7 @@ export default class DeckOut extends GameComponent {
       [this.getMyUserId()]: currentUserHand,
       [newPlayer]: newPlayerHand
     });
+    //*******************************************************************
   }
 
 }
