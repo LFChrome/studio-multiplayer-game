@@ -29,6 +29,7 @@ export default class DeckOut extends GameComponent {
         deck: deck,
         hands: playerHands,
         currentPlayer: users[0],
+        winner: "none",
       });
 
     }
@@ -40,25 +41,30 @@ export default class DeckOut extends GameComponent {
 
   render() {
     if (this.state.deck) {
-      console.log(this.state);
-      return (
-        <div className="container">
-        <hr/>
-          {this.renderSessionInfo()}
+      if (this.state.winner === "none") {
+        return (
+          <div className="container">
           <hr/>
-          Cards remaining: {this.state.deck.length}
-          <div className="row">
-            <div className="col-4">{this.renderPlayerHand()}</div>
-            <div className="col-8">
-              <textarea className="log" rows="10" readOnly></textarea>
-            </div>
+            {this.renderSessionInfo()}
+            {this.renderGameScreen()}
           </div>
-        </div>
-      )
-    } else {
+        )
+      }
+      else {
+        return (
+          <div className="container">
+          <hr/>
+            {this.renderSessionInfo()}
+            {UserApi.getName(this.state.currentPlayer)} won!
+          </div>
+        )
+      }
+    } 
+    else {
       return <p>Loading</p>
     }    
   }
+  // Render the top bar with all the information
   renderSessionInfo() {
     var id = this.getSessionId();
     var users = this.getSessionUserIds().map((user_id) => {
@@ -83,7 +89,7 @@ export default class DeckOut extends GameComponent {
             Round: {this.state.currentTurn}
           </p>
           <p>
-            Player Turn: {this.state.currentPlayer}
+            Player Turn: {UserApi.getName(this.state.currentPlayer)}
           </p>
         </div>
         <div className="col-4">
@@ -91,6 +97,21 @@ export default class DeckOut extends GameComponent {
         </div>
       </div>
     );
+  }
+  // Renders the gamescreen
+  renderGameScreen() {
+    return (
+      <div>
+        <hr/>
+        Cards remaining: {this.state.deck.length}
+        <div className="row">
+          <div className="col-4">{this.renderPlayerHand()}</div>
+          <div className="col-8">
+            <textarea className="log" rows="10" readOnly></textarea>
+          </div>
+        </div>
+      </div>
+    )
   }
   // Renders players' hands
   renderPlayerHand() {
@@ -103,7 +124,7 @@ export default class DeckOut extends GameComponent {
               <h5 className="card-title">{card}</h5>
               <button 
                 className={card} className="btn btn-success" onClick={() => {this.handleCardPlayed("blank")}}
-                disabled={this.state.currentPlayer === this.getMyUserId()}
+                disabled={this.state.currentPlayer !== this.getMyUserId()}
               >
                 Play Card
               </button>
@@ -117,34 +138,44 @@ export default class DeckOut extends GameComponent {
       </ul>
     )
   }
+  // Renders the user who won
+
+  // Handle when a card is played
   handleCardPlayed(card) {
+    var winner = "none";
     //doCardEffect(card)
-    //*******************************************************************
-    // Update the hand of the user who just played
-    let currentUserHand = this.state.hands[this.getMyUserId()];
-    let indexOfCardPlayed = currentUserHand.indexOf(card);
-    currentUserHand.splice(indexOfCardPlayed, 1);
-    //*******************************************************************
-    // Advance one round
-    let newTurn = this.state.currentTurn + 1;
-    //*******************************************************************
-    // Change the current user playing
-    let newPlayer = this.state.users[this.state.currentTurn%this.state.users.length];
-    //*******************************************************************
-    // Give a card to the new player
-    if (this.state.deck.length !== 0) {
+    if (this.state.deck.length !== 0 ) {
+      //*******************************************************************
+      // Update the hand of the user who just played
+      var currentUserHand = this.state.hands[this.getMyUserId()];
+      let indexOfCardPlayed = currentUserHand.indexOf(card);
+      currentUserHand.splice(indexOfCardPlayed, 1);
+      //*******************************************************************
+      // Advance one round
+      var newTurn = this.state.currentTurn + 1;
+      //*******************************************************************
+      // Change the current user playing
+      var newPlayer = this.state.users[this.state.currentTurn%this.state.users.length];
+      //*******************************************************************
+      // Give a card to the new player
       let cardDrawn = this.state.deck[0];
       this.state.hands[newPlayer].push(cardDrawn);
       this.state.deck.splice(0,1);
-    } 
-    let newDeck = this.state.deck;
-    let newPlayerHand = this.state.hands[newPlayer];
-    //*******************************************************************
+      var newDeck = this.state.deck;
+      this.getSessionDatabaseRef().update({
+        deck: newDeck,
+      });
+      var newPlayerHand = this.state.hands[newPlayer];
+      //*******************************************************************
+      if (this.state.deck.length == 0) {
+        winner = newPlayer;
+      }
+    }
     // Update everything in the database
     this.getSessionDatabaseRef().update({
       currentTurn: newTurn,
       currentPlayer: newPlayer,
-      deck: newDeck
+      winner: winner,
     });
     this.getSessionDatabaseRef().child('hands').update({
       [this.getMyUserId()]: currentUserHand,
