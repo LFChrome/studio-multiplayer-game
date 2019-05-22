@@ -10,7 +10,7 @@ export default class DeckOut extends GameComponent {
     if (this.getMyUserId() === this.getSessionCreatorUserId()) {
       // Creates deck and hands for all users
       let deck = [];
-      for(var i = 0; i < 30; i++) {
+      for(var i = 0; i < 40; i++) {
         deck.push("Blank");
       }
       let users = this.getSessionUserIds();
